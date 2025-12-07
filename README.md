@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 UI Component Search Engine
 
-## Getting Started
+A "Google-like" search engine for React UI components.
+It indexes documentation from major libraries (Material UI, ShadCN, Mantine, Radix, AntD) so developers can find, compare, and copy components in seconds without opening 10 tabs.
 
-First, run the development server:
+![Project Preview](public/preview.png)
+## ✨ Features
 
+- **⚡️ Instant Search:** fuzzy search across 500+ components.
+- **🧠 Smart Indexing:** Searches by name, library, framework, or synonym keywords (e.g., "Toast" finds "Snackbar").
+- **🔥 Popularity System:** Highlights trending libraries with a "Hot" badge.
+- **🛡 Admin Dashboard:** Review and approve user-submitted libraries.
+- **🤖 Automated Scrapers:** Includes scripts to auto-generate database entries.
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js 14 (App Router), Tailwind CSS
+- **Backend:** Next.js API Routes (Serverless)
+- **Database:** MongoDB (Mongoose)
+- **Tools:** Cheerio (Scraping), XML2JS (Sitemap Parsing)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/YOUR_USERNAME/ui-search-engine.git
+cd ui-search-engine
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Setup Environment Variables
+Create a `.env` file in the root directory:
+```env
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/ui-search-engine
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Seed the Database (Crucial Step)
+This project uses a **scripts folder** to manage data. You must populate your local database before the app will work.
 
-## Learn More
+**Option A: The Generator (Fastest & Recommended)**
+Instantly generates 300+ valid component links using URL patterns. No network required.
+```bash
+node scripts/seed-generator.js
+```
 
-To learn more about Next.js, take a look at the following resources:
+**Option B: The Scraper (Advanced)**
+Crawls real documentation sites to find new components.
+```bash
+node scripts/sitemap-scraper.js
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 5. Run the App
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📂 Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+/app             # Next.js App Router (Pages & API)
+  /api           # Backend Endpoints (Search, Submit, Admin)
+/components      # React UI Components
+/lib             # Database connection helper
+/models          # Mongoose Schemas (Component, Submission)
+/scripts         # 🛠 Utilities for database management
+  ├── seed-generator.js   # Generates mock data offline
+  ├── sitemap-scraper.js  # Crawls live sitemaps
+  └── scraper.js          # Manual HTML scraping
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
