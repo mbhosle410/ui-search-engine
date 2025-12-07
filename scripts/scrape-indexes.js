@@ -61,14 +61,16 @@ const TARGETS = [
     selector: "a[href*='/joy-ui/react-']",
     cleanName: (text) => text.trim()
   },
-  {
-    name: "Headless UI",
-    indexUrl: "https://headlessui.com/react/menu",
-    framework: "React",
-    baseDomain: "https://headlessui.com",
-    selector: "ul a[href^='/react/']",
-    cleanName: (text) => text.trim()
-  },
+{
+  name: "Headless UI",
+  indexUrl: "https://headlessui.com/v1/react/menu",
+  framework: "React",
+  baseDomain: "https://headlessui.com",
+  // Change 1: Remove 'ul' to match links inside any container (nav, div, etc.)
+  // Change 2: Use '*=' to match if the URL contains the path (fixes absolute URL issues)
+  selector: "a[href*='/v1/react/']",
+  cleanName: (text) => text.trim()
+},
   {
     name: "Mantine",
     indexUrl: "https://mantine.dev/core/package/",
@@ -146,6 +148,37 @@ const TARGETS = [
     baseDomain: "https://headlessui.com",
     selector: "a[href^='/v1/vue/']",
     cleanName: (text) => text.replace(/\s*\(.*?\)/, '').trim()
+  },
+  {
+    name: "PrimeReact",
+    // 🧠 STRATEGY: PrimeReact lists everything in a sidebar menu.
+    indexUrl: "https://primereact.org/accordion",
+    framework: "React",
+    baseDomain: "https://primereact.org",
+    // Target links in the layout menu
+    selector: ".layout-menu a", 
+    cleanName: (text) => text.trim()
+  },
+  {
+    name: "Magic UI",
+    // 🧠 STRATEGY: Viral visual library, standard docs structure.
+    indexUrl: "https://magicui.design/docs/components/marquee",
+    framework: "React",
+    baseDomain: "https://magicui.design",
+    selector: "a[href^='/docs/components/']",
+    cleanName: (text) => text.trim()
+  },
+{
+    name: "Preline UI",
+    // 🧠 STRATEGY: Target the main sidebar navigation. 
+    // We use a "contains" selector (*=) for safety, or just target all nav links.
+    indexUrl: "https://preline.co/docs/accordion.html",
+    framework: "CSS",
+    baseDomain: "https://preline.co",
+    // 🔴 OLD: selector: "ul a[href^='../../docs/']",
+    // 🟢 NEW: Selects links inside the nav that point to the docs section
+    selector: "nav ul a[href*='/docs/']", 
+    cleanName: (text) => text.trim()
   }
 ];
 
