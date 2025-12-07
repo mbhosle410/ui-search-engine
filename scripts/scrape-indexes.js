@@ -117,7 +117,8 @@ const TARGETS = [
     framework: "CSS",
     baseDomain: "https://www.hyperui.dev",
     selector: "a[href^='/components/']",
-    cleanName: (text) => text.trim()
+    // 🧹 CLEANER: Removes emojis, numbers, and "components" text
+    cleanName: (text) => text.replace(/[\d]+\s+components/gi, '').replace(/[^\w\s-]/g, '').trim()
   },
   {
     name: "Flowbite",
@@ -129,10 +130,11 @@ const TARGETS = [
   },
   {
     name: "DaisyUI",
-    indexUrl: "https://daisyui.com/components/",
+    // 🧹 SWITCHED STRATEGY: Use the sidebar from a specific page instead of the card grid
+    indexUrl: "https://daisyui.com/components/button/",
     framework: "CSS",
     baseDomain: "https://daisyui.com",
-    selector: "a[href^='/components/']",
+    selector: "div.drawer-side a[href^='/components/']",
     cleanName: (text) => text.trim()
   },
   
@@ -158,23 +160,29 @@ const scrapeLibrary = async (target) => {
     });
     const $ = cheerio.load(data);
 
-    // Find all links matching the selector
     $(target.selector).each((i, el) => {
       const href = $(el).attr('href');
-      const text = $(el).text();
+      // Fix: Get text only from the immediate element to avoid grabbing hidden child elements
+      let text = $(el).clone().children().remove().end().text();
+      // If empty, try normal text (some links wrap text in spans)
+      if (!text.trim()) text = $(el).text();
 
-      // Basic validation to skip junk links (like "Overview" or "GitHub")
       if (!href || text.length < 2 || text.includes("Overview") || text.includes("GitHub") || text.includes("Template")) return;
 
-      // Normalize URL
+      // 🧹 GLOBAL CLEANUP: Remove weird CSS strings and newlines
+      let cleanName = target.cleanName(text).replace(/\s+/g, ' ').trim();
+      
+      // Reject bad names (CSS code, empty, or too long sentences)
+      if (cleanName.startsWith('.') || cleanName.includes('{') || cleanName.length > 30) return;
+
       const fullUrl = href.startsWith('http') ? href : target.baseDomain + href;
 
       items.push({
-        name: target.cleanName(text),
+        name: cleanName,
         library: target.name,
         framework: target.framework,
-        docUrl: fullUrl,
-        keywords: [text.toLowerCase(), target.name.toLowerCase(), "ui component"],
+        docUrl: fullUrl.split('#')[0], // Remove anchor tags (dupe killer)
+        keywords: [cleanName.toLowerCase(), target.name.toLowerCase(), "ui component"],
         popularityScore: 90
       });
     });
@@ -183,12 +191,19 @@ const scrapeLibrary = async (target) => {
     console.error(`❌ Failed to scrape ${target.name}: ${err.message}`);
   }
 
-  // Remove duplicates (dedupe by URL)
-  const unique = Array.from(new Set(items.map(a => a.docUrl)))
-    .map(url => items.find(a => a.docUrl === url));
-    
-  console.log(`   ✅ Found ${unique.length} working components.`);
-  return unique;
+  // --- SMART DEDUPLICATION ---
+  // If multiple links point to the same URL, keep the SHORTEST name (it's usually the cleanest)
+  const uniqueMap = new Map();
+  items.forEach(item => {
+    const existing = uniqueMap.get(item.docUrl);
+    if (!existing || item.name.length < existing.name.length) {
+      uniqueMap.set(item.docUrl, item);
+    }
+  });
+
+  const uniqueItems = Array.from(uniqueMap.values());
+  console.log(`   ✅ Found ${uniqueItems.length} clean components.`);
+  return uniqueItems;
 };
 
 // --- 4. MAIN RUNNER ---
@@ -207,7 +222,7 @@ const run = async () => {
     console.log(`\n💾 Seeding ${allComponents.length} Verified Components...`);
     await Component.deleteMany({});
     await Component.insertMany(allComponents);
-    console.log("🚀 Done! Your database now has ONLY working links.");
+    console.log("🚀 Done! Your database is now CLEAN (No dups, no CSS code, no emojis).");
   }
 
   mongoose.connection.close();
