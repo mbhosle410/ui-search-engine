@@ -13,42 +13,25 @@ const Component = mongoose.models.Component || mongoose.model('Component', Compo
 
 // A. The Libraries and their URL Patterns
 const LIBRARIES = [
-  { 
-    name: "Material UI", 
-    framework: "React",
-    urlBuilder: (slug) => `https://mui.com/material-ui/react-${slug}/`,
-    score: 95
-  },
-  { 
-    name: "ShadCN UI", 
-    framework: "React",
-    urlBuilder: (slug) => `https://ui.shadcn.com/docs/components/${slug}`,
-    score: 98
-  },
-  { 
-    name: "Mantine", 
-    framework: "React",
-    urlBuilder: (slug) => `https://mantine.dev/core/${slug}/`,
-    score: 90
-  },
-  { 
-    name: "Chakra UI", 
-    framework: "React",
-    urlBuilder: (slug) => `https://chakra-ui.com/docs/components/${slug}`,
-    score: 85
-  },
-  { 
-    name: "Radix UI", 
-    framework: "React",
-    urlBuilder: (slug) => `https://www.radix-ui.com/primitives/docs/components/${slug}`,
-    score: 88
-  },
-  { 
-    name: "Ant Design", 
-    framework: "React",
-    urlBuilder: (slug) => `https://ant.design/components/${slug}`,
-    score: 92
-  }
+// --- THE GIANTS ---
+  { name: "Material UI", framework: "React", score: 99, urlBuilder: (slug) => `https://mui.com/material-ui/react-${slug}/` },
+  { name: "ShadCN UI", framework: "React", score: 98, urlBuilder: (slug) => `https://ui.shadcn.com/docs/components/${slug}` },
+  { name: "Mantine", framework: "React", score: 95, urlBuilder: (slug) => `https://mantine.dev/core/${slug}/` },
+  { name: "Ant Design", framework: "React", score: 92, urlBuilder: (slug) => `https://ant.design/components/${slug}` },
+  { name: "Chakra UI", framework: "React", score: 90, urlBuilder: (slug) => `https://chakra-ui.com/docs/components/${slug}` },
+  
+  // --- TAILWIND ECOSYSTEM ---
+  { name: "DaisyUI", framework: "CSS", score: 94, urlBuilder: (slug) => `https://daisyui.com/components/${slug}/` },
+  { name: "Headless UI", framework: "React", score: 88, urlBuilder: (slug) => `https://headlessui.com/react/${slug}` },
+  { name: "Flowbite", framework: "React", score: 89, urlBuilder: (slug) => `https://flowbite.com/docs/components/${slug}/` },
+  { name: "HyperUI", framework: "CSS", score: 80, urlBuilder: (slug) => `https://www.hyperui.dev/components/application-ui/${slug}` },
+
+  // --- MODERN / TRENDY ---
+  { name: "NextUI", framework: "React", score: 93, urlBuilder: (slug) => `https://nextui.org/docs/components/${slug}` },
+  { name: "Radix UI", framework: "React", score: 87, urlBuilder: (slug) => `https://www.radix-ui.com/primitives/docs/components/${slug}` },
+  { name: "Tremor", framework: "React", score: 85, urlBuilder: (slug) => `https://www.tremor.so/docs/components/${slug}` }, // Good for charts
+  { name: "Aceternity", framework: "React", score: 96, urlBuilder: (slug) => `https://ui.aceternity.com/components/${slug}` }, // Very viral right now
+  { name: "Tamagui", framework: "React", score: 82, urlBuilder: (slug) => `https://tamagui.dev/docs/components/${slug}` },
 ];
 
 // B. The Master List of Components (Common across all libraries)
